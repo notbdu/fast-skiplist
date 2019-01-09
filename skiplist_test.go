@@ -112,6 +112,23 @@ func TestBasicIntCRUD(t *testing.T) {
 	}
 }
 
+func TestGetGreaterThanOrEqualTo(t *testing.T) {
+	var list *SkipList
+
+	list = New()
+
+	list.Set(10, 1)
+	list.Set(60, 2)
+	list.Set(30, 3)
+	list.Set(20, 4)
+	list.Set(90, 5)
+
+	element := list.GetGreaterThanOrEqualTo(55)
+	if element == nil || element.Key() != 60 {
+		t.Fatal(`wrong value for key "55", should have found the element for key "60"`)
+	}
+}
+
 func TestChangeLevel(t *testing.T) {
 	var i float64
 	list := New()

@@ -55,23 +55,22 @@ func (list *SkipList) Get(key float64) *Element {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 
-	var prev *elementNode = &list.elementNode
-	var next *Element
-
-	for i := list.maxLevel - 1; i >= 0; i-- {
-		next = prev.next[i]
-
-		for next != nil && key > next.key {
-			prev = &next.elementNode
-			next = next.next[i]
-		}
-	}
+	next := list.getNext(key)
 
 	if next != nil && next.key <= key {
 		return next
 	}
 
 	return nil
+}
+
+// GetGreaterThanOrEqualTo finds the first element whose key is greater than or equal to the lookup key.
+// Locking is optimistic and happens only after searching with a fast check for deletion after locking.
+func (list *SkipList) GetGreaterThanOrEqualTo(key float64) *Element {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
+	return list.getNext(key)
 }
 
 // Remove deletes an element from the list.
@@ -93,6 +92,24 @@ func (list *SkipList) Remove(key float64) *Element {
 	}
 
 	return nil
+}
+
+// getNext finds the next element whose key is greater than the lookup key.
+// Returns nil if the search reaches the end of the list.
+func (list *SkipList) getNext(key float64) *Element {
+	var prev *elementNode = &list.elementNode
+	var next *Element
+
+	for i := list.maxLevel - 1; i >= 0; i-- {
+		next = prev.next[i]
+
+		for next != nil && key > next.key {
+			prev = &next.elementNode
+			next = next.next[i]
+		}
+	}
+
+	return next
 }
 
 // getPrevElementNodes is the private search mechanism that other functions use.

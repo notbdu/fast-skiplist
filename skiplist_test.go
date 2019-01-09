@@ -127,6 +127,11 @@ func TestGetGreaterThanOrEqualTo(t *testing.T) {
 	if element == nil || element.Key() != 60 {
 		t.Fatal(`wrong value for key "55", should have found the element for key "60"`)
 	}
+
+	element = list.GetGreaterThanOrEqualTo(30)
+	if element == nil || element.Key() != 30 {
+		t.Fatal(`wrong value for key "30", should have found the element for key "30"`)
+	}
 }
 
 func TestChangeLevel(t *testing.T) {
